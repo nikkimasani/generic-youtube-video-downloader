@@ -1,26 +1,43 @@
 import { createServer } from "node:http";
 import { spawn } from "node:child_process";
+import { createReadStream } from "node:fs";
 import { mkdir } from "node:fs/promises";
-import { homedir } from "node:os";
+import { homedir, networkInterfaces } from "node:os";
 import { join, resolve } from "node:path";
 
-const host = "127.0.0.1";
+const lanEnabled = process.env.CLIPKIT_LAN === "1";
+const host = lanEnabled ? "0.0.0.0" : "127.0.0.1";
 const port = Number(process.env.CLIPKIT_PORT || 3030);
 const downloadsDir = resolve(process.env.CLIPKIT_DOWNLOADS_DIR || join(homedir(), "Downloads", "ClipKit"));
 const allowedOrigins = new Set(["https://clipkit-nine.vercel.app", "http://localhost:3030"]);
 const jobs = new Map();
+const pairingToken = crypto.randomUUID();
+
+function lanAddress() {
+  const interfaces = networkInterfaces();
+  for (const values of Object.values(interfaces)) {
+    const match = values?.find((entry) => entry.family === "IPv4" && !entry.internal);
+    if (match) return match.address;
+  }
+  return null;
+}
+
+function isLocal(request) {
+  return ["127.0.0.1", "::1", "::ffff:127.0.0.1"].includes(request.socket.remoteAddress);
+}
 
 await mkdir(downloadsDir, { recursive: true });
 
 function cors(request, response) {
   const origin = request.headers.origin;
-  if (origin && allowedOrigins.has(origin)) {
+  const mobileOrigin = lanEnabled && origin?.startsWith("http://") && origin.endsWith(`:${port}`);
+  if (origin && (allowedOrigins.has(origin) || mobileOrigin)) {
     response.setHeader("Access-Control-Allow-Origin", origin);
     response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     response.setHeader("Access-Control-Allow-Headers", "Content-Type");
     response.setHeader("Access-Control-Allow-Private-Network", "true");
   }
-  return !origin || allowedOrigins.has(origin);
+  return !origin || allowedOrigins.has(origin) || mobileOrigin;
 }
 
 function json(response, status, body) {
@@ -81,7 +98,16 @@ createServer(async (request, response) => {
   if (request.method === "OPTIONS") return response.writeHead(204).end();
   const url = new URL(request.url, `http://${host}:${port}`);
   try {
+    if (request.method === "GET" && url.pathname === "/") {
+      response.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" });
+      return createReadStream(new URL("./mobile.html", import.meta.url)).pipe(response);
+    }
+    if (request.method === "POST" && url.pathname === "/api/pair") {
+      const { token } = await readBody(request);
+      return token === pairingToken ? json(response, 200, { paired: true }) : json(response, 401, { error: "Pairing link is invalid or expired." });
+    }
     if (request.method === "GET" && url.pathname === "/health") return json(response, 200, { ready: true });
+    if (!isLocal(request) && request.headers["x-clipkit-pair"] !== pairingToken) return json(response, 401, { error: "Pair this device from the one-time ClipKit link first." });
     if (request.method === "GET" && url.pathname.startsWith("/api/jobs/")) {
       const job = jobs.get(url.pathname.slice(10));
       return job ? json(response, 200, job) : json(response, 404, { error: "Job not found." });
@@ -99,4 +125,11 @@ createServer(async (request, response) => {
   } catch (error) {
     return json(response, 500, { error: error instanceof Error ? error.message : "Unexpected error." });
   }
-}).listen(port, host, () => console.log(`ClipKit companion ready at http://${host}:${port}`));
+}).listen(port, host, () => {
+  console.log(`ClipKit companion ready at http://${host}:${port}`);
+  if (lanEnabled) {
+    const address = lanAddress();
+    if (address) console.log(`Pair an iPhone or iPad on this Wi-Fi: http://${address}:${port}/?pair=${pairingToken}`);
+    else console.log("Home-network mode is on, but no Wi-Fi/LAN address was detected.");
+  }
+});

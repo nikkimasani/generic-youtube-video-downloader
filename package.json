@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vercel dev",
-    "companion": "node companion/server.mjs"
+    "companion": "node companion/server.mjs",
+    "companion:lan": "set CLIPKIT_LAN=1&& node companion/server.mjs"
   },
   "engines": {
     "node": ">=20"
