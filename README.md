@@ -11,6 +11,8 @@ Only download material you own or are allowed to save. ClipKit does not bypass D
 3. Run `npm run companion` from this repository and leave it running.
 4. Open the deployed ClipKit page and select the browser in which you are signed in.
 
+For a one-command Windows startup, run `npm run launch`. It starts home-network mode, opens ClipKit, and copies the private mobile pairing link to the clipboard.
+
 ### iPhone and iPad on home Wi-Fi
 
 1. Start the companion with `npm run companion:lan`.

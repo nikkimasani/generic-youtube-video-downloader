@@ -107,7 +107,7 @@ createServer(async (request, response) => {
       const { token } = await readBody(request);
       return token === pairingToken ? json(response, 200, { paired: true }) : json(response, 401, { error: "Pairing link is invalid or expired." });
     }
-    if (request.method === "GET" && url.pathname === "/health") return json(response, 200, { ready: true });
+    if (request.method === "GET" && url.pathname === "/health") return json(response, 200, { ready: true, lan: lanEnabled });
     if (request.method === "GET" && url.pathname === "/api/pairing-link") {
       if (!isLocal(request)) return json(response, 403, { error: "Pairing links are only available from this computer." });
       const address = lanAddress();
