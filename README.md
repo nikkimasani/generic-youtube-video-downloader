@@ -1,23 +1,22 @@
 # ClipKit Local
 
-ClipKit Local is a standalone, local web interface for `yt-dlp`. It replaces the old terminal-only workflow with a browser UI while keeping downloads on your computer.
+ClipKit is a standalone web interface for `yt-dlp`. It replaces the old terminal-only workflow with a browser UI that streams completed downloads to the browser.
 
 Only download material you own or are allowed to save. ClipKit does not bypass DRM or access controls.
 
 ## Start it
 
-1. Install [Node.js 20+](https://nodejs.org/) and [yt-dlp](https://github.com/yt-dlp/yt-dlp#installation).
-2. In this repository, run `npm start`.
-3. Open `http://localhost:3030`.
+1. Install dependencies with `npm install`.
+2. Run `npm run dev`.
+3. Open the local URL Vercel provides.
 
-Downloads are saved to `~/Downloads/ClipKit` by default. Set `DOWNLOADS_DIR` before starting the app to use another location. Set `PORT` to use a different local port.
+Downloads are sent directly to your browser and are deleted from the function's temporary space after streaming.
 
 ## What it includes
 
 - Video (MP4) and audio (MP3) downloads
 - A quality selector for video
-- Download progress and a list of recently saved files
-- A local-only service: URLs and files are not sent to a third-party web app
+- A Vercel deployment with files streamed directly to the browser
 
 The legacy Bash TUI remains in `ytdlp.sh` for users who prefer it.
 
