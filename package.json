@@ -1,0 +1,14 @@
+{
+  "name": "clipkit-local",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A local web interface for yt-dlp.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node --watch server.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
