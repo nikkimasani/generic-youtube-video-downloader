@@ -1,4 +1,39 @@
-# A Generic YouTube Video Downloader
+# ClipKit Local
+
+ClipKit is a standalone web interface for `yt-dlp`. The Vercel page is the interface; the included local companion downloads on your own computer and uses your signed-in browser session without sending its cookies anywhere.
+
+Only download material you own or are allowed to save. ClipKit does not bypass DRM or access controls.
+
+## Start it
+
+1. Install [Node.js 20+](https://nodejs.org/), [yt-dlp](https://github.com/yt-dlp/yt-dlp#installation), and FFmpeg.
+2. Sign in to the video service in Chrome, Edge, or Firefox.
+3. Run `npm run companion` from this repository and leave it running.
+4. Open the deployed ClipKit page and select the browser in which you are signed in.
+
+For a one-command Windows startup, run `npm run launch`. It starts home-network mode, opens ClipKit, and copies the private mobile pairing link to the clipboard.
+
+### iPhone and iPad on home Wi-Fi
+
+1. Start the companion with `npm run companion:lan`.
+2. On your computer, copy the one-time pairing link that ClipKit prints.
+3. Open that link on your iPhone or iPad while it is on the same home Wi-Fi.
+
+The pairing link changes each time the companion starts. Keep it private: it authorizes that device to ask your computer to start downloads.
+
+Downloads are saved to `~/Downloads/ClipKit` by default. Set `CLIPKIT_DOWNLOADS_DIR` before starting the companion to use another location.
+
+## What it includes
+
+- Video (MP4) and audio (MP3) downloads
+- A quality selector for video
+- A Vercel interface paired with a cookie-safe local companion
+
+The legacy Bash TUI remains in `ytdlp.sh` for users who prefer it.
+
+---
+
+# Legacy Bash TUI
 
 ***Now includes video quality selection***
 

@@ -1,0 +1,16 @@
+{
+  "name": "clipkit-local",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A Vercel-hosted web interface for permitted yt-dlp downloads.",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "companion": "node companion/server.mjs",
+    "companion:lan": "set CLIPKIT_LAN=1&& node companion/server.mjs",
+    "launch": "powershell -ExecutionPolicy Bypass -File scripts\\launch-clipkit.ps1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

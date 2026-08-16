@@ -1,0 +1,17 @@
+{
+  "name": "ClipKit",
+  "short_name": "ClipKit",
+  "description": "A private companion-powered media download launcher.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#101520",
+  "theme_color": "#101520",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
