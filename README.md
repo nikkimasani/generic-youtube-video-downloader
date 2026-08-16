@@ -1,22 +1,23 @@
 # ClipKit Local
 
-ClipKit is a standalone web interface for `yt-dlp`. It replaces the old terminal-only workflow with a browser UI that streams completed downloads to the browser.
+ClipKit is a standalone web interface for `yt-dlp`. The Vercel page is the interface; the included local companion downloads on your own computer and uses your signed-in browser session without sending its cookies anywhere.
 
 Only download material you own or are allowed to save. ClipKit does not bypass DRM or access controls.
 
 ## Start it
 
-1. Install dependencies with `npm install`.
-2. Run `npm run dev`.
-3. Open the local URL Vercel provides.
+1. Install [Node.js 20+](https://nodejs.org/), [yt-dlp](https://github.com/yt-dlp/yt-dlp#installation), and FFmpeg.
+2. Sign in to the video service in Chrome, Edge, or Firefox.
+3. Run `npm run companion` from this repository and leave it running.
+4. Open the deployed ClipKit page and select the browser in which you are signed in.
 
-Downloads are sent directly to your browser and are deleted from the function's temporary space after streaming.
+Downloads are saved to `~/Downloads/ClipKit` by default. Set `CLIPKIT_DOWNLOADS_DIR` before starting the companion to use another location.
 
 ## What it includes
 
 - Video (MP4) and audio (MP3) downloads
 - A quality selector for video
-- A Vercel deployment with files streamed directly to the browser
+- A Vercel interface paired with a cookie-safe local companion
 
 The legacy Bash TUI remains in `ytdlp.sh` for users who prefer it.
 

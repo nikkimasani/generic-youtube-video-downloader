@@ -5,7 +5,8 @@
   "description": "A Vercel-hosted web interface for permitted yt-dlp downloads.",
   "type": "module",
   "scripts": {
-    "dev": "vercel dev"
+    "dev": "vercel dev",
+    "companion": "node companion/server.mjs"
   },
   "engines": {
     "node": ">=20"
