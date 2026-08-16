@@ -45,6 +45,11 @@ export default async function handler(request, response) {
     response.on("finish", () => rm(directory, { recursive: true, force: true }));
     return stream.pipe(response);
   } catch (error) {
+    console.error("[clipkit:download-failed]", {
+      host: parsed.hostname,
+      kind,
+      message: error instanceof Error ? error.message.slice(0, 2_000) : String(error),
+    });
     await rm(directory, { recursive: true, force: true });
     return response.status(422).json({ error: "Download failed. Confirm the link is publicly available and try again." });
   }
