@@ -15,11 +15,12 @@ const pairingToken = crypto.randomUUID();
 
 function lanAddress() {
   const interfaces = networkInterfaces();
+  const candidates = [];
   for (const values of Object.values(interfaces)) {
     const match = values?.find((entry) => entry.family === "IPv4" && !entry.internal);
-    if (match) return match.address;
+    if (match) candidates.push(match.address);
   }
-  return null;
+  return candidates.find((address) => address.startsWith("192.168.") || address.startsWith("10.")) || candidates.find((address) => address.startsWith("172.")) || null;
 }
 
 function isLocal(request) {
@@ -107,6 +108,11 @@ createServer(async (request, response) => {
       return token === pairingToken ? json(response, 200, { paired: true }) : json(response, 401, { error: "Pairing link is invalid or expired." });
     }
     if (request.method === "GET" && url.pathname === "/health") return json(response, 200, { ready: true });
+    if (request.method === "GET" && url.pathname === "/api/pairing-link") {
+      if (!isLocal(request)) return json(response, 403, { error: "Pairing links are only available from this computer." });
+      const address = lanAddress();
+      return address ? json(response, 200, { url: `http://${address}:${port}/?pair=${pairingToken}` }) : json(response, 503, { error: "No home-network address was detected." });
+    }
     if (!isLocal(request) && request.headers["x-clipkit-pair"] !== pairingToken) return json(response, 401, { error: "Pair this device from the one-time ClipKit link first." });
     if (request.method === "GET" && url.pathname.startsWith("/api/jobs/")) {
       const job = jobs.get(url.pathname.slice(10));
